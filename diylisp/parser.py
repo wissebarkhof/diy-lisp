@@ -18,6 +18,8 @@ def parse(source):
     # pre-processing
     source = remove_comments(source)
     split_source = split_exps(source)
+    if check_paren == False:
+        raise LispError("Incomplete Expression")
     for element in split_source:
         if element == '#t':
             return True
@@ -26,17 +28,19 @@ def parse(source):
         elif element.isdigit() == True:
             return int(element)
         elif element[0] == '(':
-            return element.replace(')', '').replace('(', '').split()
-
+            no_brackets = element.replace(')', '',1 ).replace('(', '', 1)
+            split = split_exps(no_brackets)
+            parsed = []
+            for i in split:
+                parsed.append(parse(i))
+            return parsed
         else: return element
 
-
-
-
-
-    
-
-    
+def check_paren(expression):
+    open_pars = [m.start() for m in re.finditer( "(" , expression)]
+    for i in open_pars:
+        if find_matching_paren(expression, i) == LispError("Incomplete expression: %s" % i):
+            return False
 
 ##
 ## Below are a few useful utility functions. These should come in handy when 
