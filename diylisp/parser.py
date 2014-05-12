@@ -25,6 +25,9 @@ def parse(source):
             return False
         elif element.isdigit() == True:
             return int(element)
+        elif element[0] == '(':
+            return element.replace(')', '').replace('(', '').split()
+
         else: return element
 
 
