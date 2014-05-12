@@ -17,6 +17,11 @@ def parse(source):
     # pre-processing
     source = remove_comments(source)
     split_source = split_exps(source)
+    for element in split_source:
+        if type( element) is str:
+            return element
+
+
 
 
     
