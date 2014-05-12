@@ -18,8 +18,13 @@ def parse(source):
     source = remove_comments(source)
     split_source = split_exps(source)
     for element in split_source:
-        if type( element) is str:
+        if element == '#t':
+            return True
+        elif element == '#f':
+            return False
+        elif type( element) is str:
             return element
+        
 
 
 
