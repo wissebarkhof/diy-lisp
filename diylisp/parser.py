@@ -13,8 +13,15 @@ understand.
 def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
+    
+    # pre-processing
+    source = remove_comments(source)
+    split_source = split_exps(source)
 
-    raise NotImplementedError("DIY")
+
+    
+
+    
 
 ##
 ## Below are a few useful utility functions. These should come in handy when 
