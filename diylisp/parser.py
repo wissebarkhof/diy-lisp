@@ -17,16 +17,18 @@ integer = re.compile('[0-9]+')
 symbol = re.compile('[a-zA-Z]+')
 
 
-
 def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
     
     # pre-processing
-    source = remove_comments(source)
-    if check_paren == False:
-        raise LispError("Incomplete Expression")
+    if check_paren(source) == 1:
+        raise LispError('Incomplete expression')
+    if check_paren(source) == 2:
+        raise LispError("Expected EOF")
 
+    source = remove_comments(source)
+    source = source.strip()
 
     # base-case for integer-types
     if source == '#t':
@@ -47,33 +49,32 @@ def parse(source):
         lists[0] = ' '
         lists[last_paren] = ' '
         new_source = ''.join(lists)
+
+        new_source.strip()
+
+        # recurse on individual parts of the expression
         split = split_exps(new_source)
         parsed = []
         for i in split:
-             parsed.append(parse(i))
+
+            parsed.append(parse(i))
         return parsed
+    
 
-
-    # elif first[0] == '(':
-    #     no_brackets = first.replace(')', '',1 ).replace('(', '', 1)
-    #     print no_brackets
-    #     split = split_exps(no_brackets)
-    #     parsed = []
-    #     for i in split:
-    #         parsed.append(parse(i))
-    #     return parsed
-
-
+def findOccurences(s, ch):
+    return [i for i, letter in enumerate(s) if letter == ch]
 
 def check_paren(expression):
-    """Finds all the open parentheses in the expression and their matching closed parentheses. If
-    find_matching_paren raises an exeption, the function returns False."""
+    """Finds all the open parentheses in the expression and all the closed parentheses. If there
+    are more open parentheses than closed are found, the function outputs 2, and 1 if vice versa."""
 
-    open_pars = [m.start() for m in re.finditer( "(" , expression)]
-    for i in open_pars:
-        if find_matching_paren(expression, i) == LispError("Incomplete expression: %s" % i):
-            return False
+    open_pars = findOccurences(expression, "(")
+    closed_pars = findOccurences(expression, ")")
 
+    if len(open_pars) < len(closed_pars):
+        return 2
+    if len(open_pars) > len(closed_pars):
+        return 1
 ##
 ## Below are a few useful utility functions. These should come in handy when 
 ## implementing `parse`. We don't want to spend the day implementing parenthesis 
