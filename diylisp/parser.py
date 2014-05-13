@@ -24,27 +24,44 @@ def parse(source):
     
     # pre-processing
     source = remove_comments(source)
-    split_source = split_exps(source)
     if check_paren == False:
         raise LispError("Incomplete Expression")
 
-    # types
-    for element in split_source:
-        if element == '#t':
-            return True
-        elif element == '#f':
-            return False
-        elif re.match(integer, element):
-            return int(element)
-        elif re.match(symbol, element):
-            return element
-        elif element[0] == '(':
-            no_brackets = element.replace(')', '',1 ).replace('(', '', 1)
-            split = split_exps(no_brackets)
-            parsed = []
-            for i in split:
-                parsed.append(parse(i))
-            return parsed
+
+    # base-case for integer-types
+    if source == '#t':
+        return True
+    elif source == '#f':
+        return False
+    elif re.match(integer, source):
+        return int(source)
+    elif re.match(symbol, source):
+        return source
+
+    # recursive case
+    if source[0] == '(':
+
+        #remove brackets
+        last_paren = find_matching_paren(source)
+        lists = list(source)
+        lists[0] = ' '
+        lists[last_paren] = ' '
+        new_source = ''.join(lists)
+        split = split_exps(new_source)
+        parsed = []
+        for i in split:
+             parsed.append(parse(i))
+        return parsed
+
+
+    # elif first[0] == '(':
+    #     no_brackets = first.replace(')', '',1 ).replace('(', '', 1)
+    #     print no_brackets
+    #     split = split_exps(no_brackets)
+    #     parsed = []
+    #     for i in split:
+    #         parsed.append(parse(i))
+    #     return parsed
 
 
 
