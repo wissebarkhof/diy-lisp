@@ -40,6 +40,10 @@ def parse(source):
     elif re.match(symbol, source):
         return source
 
+    if source[0] == "'":
+        adapted = "(quote " + source[1:] + ")"
+        return parse(adapted)
+
     # recursive case
     if source[0] == '(':
 
