@@ -11,6 +11,13 @@ the workshop. Its job is to convert strings into data structures that the evalua
 understand. 
 """
 
+# idea: tidy code by pre-defining some regular expressions
+
+integer = re.compile('[0-9]+')
+symbol = re.compile('[a-zA-Z]+')
+
+
+
 def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
@@ -20,13 +27,17 @@ def parse(source):
     split_source = split_exps(source)
     if check_paren == False:
         raise LispError("Incomplete Expression")
+
+    # types
     for element in split_source:
         if element == '#t':
             return True
         elif element == '#f':
             return False
-        elif element.isdigit() == True:
+        elif re.match(integer, element):
             return int(element)
+        elif re.match(symbol, element):
+            return element
         elif element[0] == '(':
             no_brackets = element.replace(')', '',1 ).replace('(', '', 1)
             split = split_exps(no_brackets)
@@ -34,9 +45,13 @@ def parse(source):
             for i in split:
                 parsed.append(parse(i))
             return parsed
-        else: return element
+
+
 
 def check_paren(expression):
+    """Finds all the open parentheses in the expression and their matching closed parentheses. If
+    find_matching_paren raises an exeption, the function returns False."""
+
     open_pars = [m.start() for m in re.finditer( "(" , expression)]
     for i in open_pars:
         if find_matching_paren(expression, i) == LispError("Incomplete expression: %s" % i):
