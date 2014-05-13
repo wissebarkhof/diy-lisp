@@ -14,7 +14,7 @@ understand.
 # idea: tidy code by pre-defining some regular expressions
 
 integer = re.compile('[0-9]+')
-symbol = re.compile('[a-zA-Z]+')
+symbol = re.compile('[a-zA-Z*<>+=-]+')
 
 
 def parse(source):
@@ -50,16 +50,14 @@ def parse(source):
         lists[last_paren] = ' '
         new_source = ''.join(lists)
 
-        new_source.strip()
-
         # recurse on individual parts of the expression
         split = split_exps(new_source)
         parsed = []
         for i in split:
-
             parsed.append(parse(i))
+
         return parsed
-    
+
 
 def findOccurences(s, ch):
     return [i for i, letter in enumerate(s) if letter == ch]
