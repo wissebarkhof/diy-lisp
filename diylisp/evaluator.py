@@ -40,23 +40,23 @@ def evaluate(ast, env):
     #arithmetic:
 
     if ast[0] == "+":
-        if is_integer(ast[1]) and is_integer(ast[2]):
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
             return evaluate(ast[1], env) + evaluate(ast[2], env)
         else: raise LispError
     if ast[0] == "-":
-        if is_integer(ast[1]) and is_integer(ast[2]):
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
             return evaluate(ast[1], env) - evaluate(ast[2], env)
         else: raise LispError
     if ast[0] == "*":
-        if is_integer(ast[1]) and is_integer(ast[2]):
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
             return evaluate(ast[1], env) * evaluate(ast[2], env)
         else: raise LispError
     if ast[0] == "/":
-        if is_integer(ast[1]) and is_integer(ast[2]):
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
             return evaluate(ast[1], env) / evaluate(ast[2], env)
         else: raise LispError
     if ast[0] == "mod":
-        if is_integer(ast[1]) and is_integer(ast[2]):
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
             return evaluate(ast[1], env) % evaluate(ast[2], env)
         else: raise LispError
 
