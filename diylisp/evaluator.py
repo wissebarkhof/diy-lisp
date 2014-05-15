@@ -23,19 +23,46 @@ symbol = re.compile('[a-zA-Z*<>+=-]+')
 def evaluate(ast, env):
     """Evaluate an Abstract Syntax Tree in the specified environment."""
 
-    # evaluating booleans
+    # evaluating atoms
     if is_boolean(ast):
         return ast
     if is_integer(ast):
         return ast
     if ast[0] == "quote":
         return ast[1]
+
+    #typechecks
     if ast[0] == "atom":
         return is_atom(evaluate(ast[1], env))
     if ast[0] == "eq":
         return evaluate(ast[1], env) == evaluate(ast[2], env) and \
                is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env))
+    #arithmetic:
 
+    if ast[0] == "+":
+        if is_integer(ast[1]) and is_integer(ast[2]):
+            return evaluate(ast[1], env) + evaluate(ast[2], env)
+        else: raise LispError
+    if ast[0] == "-":
+        if is_integer(ast[1]) and is_integer(ast[2]):
+            return evaluate(ast[1], env) - evaluate(ast[2], env)
+        else: raise LispError
+    if ast[0] == "*":
+        if is_integer(ast[1]) and is_integer(ast[2]):
+            return evaluate(ast[1], env) * evaluate(ast[2], env)
+        else: raise LispError
+    if ast[0] == "/":
+        if is_integer(ast[1]) and is_integer(ast[2]):
+            return evaluate(ast[1], env) / evaluate(ast[2], env)
+        else: raise LispError
+    if ast[0] == "mod":
+        if is_integer(ast[1]) and is_integer(ast[2]):
+            return evaluate(ast[1], env) % evaluate(ast[2], env)
+        else: raise LispError
 
-
+    # boolean operators
+    if ast[0] == ">":
+        return evaluate(ast[1], env) > evaluate(ast[2], env)
+    if ast[0] == "<":
+        return evaluate(ast[1], env) < evaluate(ast[2], env)
 
