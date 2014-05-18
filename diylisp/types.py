@@ -25,15 +25,20 @@ class Environment:
         self.variables = variables if variables else {}
 
     def lookup(self, symbol):
-        if self.variables.get(symbol) == None:
-            raise LispError (symbol)
-        else: return self.variables.get(symbol)
+        """Lookup returns the corresponding value of some variable."""
+        if self.variables.get(symbol) != None:
+            return self.variables.get(symbol)
+        else: raise LispError (symbol)
 
     def extend(self, variables):
+        """Extend lets you extend the environment with variables."""
         new = self.variables.copy()
         new.update(variables)
         return Environment(new)
 
 
     def set(self, symbol, value):
-        raise NotImplementedError("DIY")
+        """Set lets you add a key, value pair to the environment"""
+        if self.variables.get(symbol) == None:
+            return self.variables.update({symbol : value})
+        else: raise LispError("already defined")
