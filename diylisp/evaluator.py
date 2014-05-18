@@ -24,6 +24,8 @@ def evaluate(ast, env):
     """Evaluate an Abstract Syntax Tree in the specified environment."""
 
     # evaluating atoms
+    if is_symbol(ast):
+        return evaluate(env.lookup(ast), env)
     if is_boolean(ast):
         return ast
     if is_integer(ast):
@@ -31,14 +33,22 @@ def evaluate(ast, env):
     if ast[0] == "quote":
         return ast[1]
 
+    # defining variables
+    if ast[0] == "define":
+        if is_symbol(ast[1]):
+            if len(ast) == 3:
+                return env.set(ast[1], ast[2])
+            else: raise LispError("Wrong number of arguments")
+        else: raise LispError("non-symbol")
+
     #typechecks
     if ast[0] == "atom":
         return is_atom(evaluate(ast[1], env))
     if ast[0] == "eq":
         return evaluate(ast[1], env) == evaluate(ast[2], env) and \
                is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env))
-    #arithmetic:
 
+    #arithmetic:
     if ast[0] == "+":
         if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
             return evaluate(ast[1], env) + evaluate(ast[2], env)
@@ -65,4 +75,14 @@ def evaluate(ast, env):
         return evaluate(ast[1], env) > evaluate(ast[2], env)
     if ast[0] == "<":
         return evaluate(ast[1], env) < evaluate(ast[2], env)
+
+    # control-flow
+    if ast[0] == 'if':
+        pred = ast[1]
+        then = ast[2]
+        elsee = ast[3]
+        if evaluate(pred, env):
+            return evaluate(then, env)
+        else: return evaluate(elsee, env)
+
 
