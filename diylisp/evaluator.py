@@ -33,85 +33,83 @@ def evaluate(ast, env):
     if ast[0] == "quote":
         return ast[1]
 
+    if is_list(ast):
     # functions
-    if is_closure(ast[0]):
-        closure = ast[0]
-        arguments = ast[1:]
-        params = closure.params
-        number_of_arguments = len(arguments)
-        number_of_params = len(params)
-      
+        if is_closure(ast[0]):
+            closure = ast[0]
+            arguments = ast[1:]
+            params = closure.params
+            number_of_arguments = len(arguments)
+            number_of_params = len(params)
 
-        if number_of_arguments != number_of_params:
-            raise LispError
-        variables = {}
-        for i in range(number_of_arguments):
-            arg = evaluate(arguments[i], env)
-            param = params[i]
-            variables.update({param : arg})
-        environment = closure.env.extend(variables)
+            if number_of_arguments != number_of_params:
+                raise LispError
+            variables = {}
+            for i in range(number_of_arguments):
+                arg = evaluate(arguments[i], env)
+                param = params[i]
+                variables.update({param : arg})
+            environment = closure.env.extend(variables)
 
-        return evaluate(closure.body, environment)
+            return evaluate(closure.body, environment)
 
-    if ast[0] == "lambda":
-        if not is_list(ast[1]):
-            raise LispError
-        if len(ast) == 3:
-            return Closure(env, ast[1], ast[2])
-        else: raise LispError("number of arguments")
-
-
-
-    # defining variables
-    if ast[0] == "define":
-        if is_symbol(ast[1]):
+        if ast[0] == "lambda":
+            if not is_list(ast[1]):
+                raise LispError
             if len(ast) == 3:
-                return env.set(ast[1], ast[2])
-            else: raise LispError("Wrong number of arguments")
-        else: raise LispError("non-symbol")
+                return Closure(env, ast[1], ast[2])
+            else: raise LispError("number of arguments")
 
-    #typechecks
-    if ast[0] == "atom":
-        return is_atom(evaluate(ast[1], env))
-    if ast[0] == "eq":
-        return evaluate(ast[1], env) == evaluate(ast[2], env) and \
-               is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env))
+        # defining variables
+        if ast[0] == "define":
+            if is_symbol(ast[1]):
+                if len(ast) == 3:
+                    return env.set(ast[1], ast[2])
+                else: raise LispError("Wrong number of arguments")
+            else: raise LispError("non-symbol")
 
-    #arithmetic:
-    if ast[0] == "+":
-        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
-            return evaluate(ast[1], env) + evaluate(ast[2], env)
-        else: raise LispError
-    if ast[0] == "-":
-        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
-            return evaluate(ast[1], env) - evaluate(ast[2], env)
-        else: raise LispError
-    if ast[0] == "*":
-        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
-            return evaluate(ast[1], env) * evaluate(ast[2], env)
-        else: raise LispError
-    if ast[0] == "/":
-        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
-            return evaluate(ast[1], env) / evaluate(ast[2], env)
-        else: raise LispError
-    if ast[0] == "mod":
-        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
-            return evaluate(ast[1], env) % evaluate(ast[2], env)
-        else: raise LispError
+        #typechecks
+        if ast[0] == "atom":
+            return is_atom(evaluate(ast[1], env))
+        if ast[0] == "eq":
+            return evaluate(ast[1], env) == evaluate(ast[2], env) and \
+                   is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env))
 
-    # boolean operators
-    if ast[0] == ">":
-        return evaluate(ast[1], env) > evaluate(ast[2], env)
-    if ast[0] == "<":
-        return evaluate(ast[1], env) < evaluate(ast[2], env)
+        #arithmetic:
+        if ast[0] == "+":
+            if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+                return evaluate(ast[1], env) + evaluate(ast[2], env)
+            else: raise LispError
+        if ast[0] == "-":
+            if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+                return evaluate(ast[1], env) - evaluate(ast[2], env)
+            else: raise LispError
+        if ast[0] == "*":
+            if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+                return evaluate(ast[1], env) * evaluate(ast[2], env)
+            else: raise LispError
+        if ast[0] == "/":
+            if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+                return evaluate(ast[1], env) / evaluate(ast[2], env)
+            else: raise LispError
+        if ast[0] == "mod":
+            if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+                return evaluate(ast[1], env) % evaluate(ast[2], env)
+            else: raise LispError
 
-    # control-flow
-    if ast[0] == 'if':
-        pred = ast[1]
-        then = ast[2]
-        elsee = ast[3]
-        if evaluate(pred, env):
-            return evaluate(then, env)
-        else: return evaluate(elsee, env)
+        # boolean operators
+        if ast[0] == ">":
+            return evaluate(ast[1], env) > evaluate(ast[2], env)
+        if ast[0] == "<":
+            return evaluate(ast[1], env) < evaluate(ast[2], env)
+
+        # control-flow
+        if ast[0] == 'if':
+            pred = ast[1]
+            then = ast[2]
+            elsee = ast[3]
+            if evaluate(pred, env):
+                return evaluate(then, env)
+            else: return evaluate(elsee, env)
 
 
