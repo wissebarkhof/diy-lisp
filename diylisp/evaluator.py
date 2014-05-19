@@ -33,6 +33,35 @@ def evaluate(ast, env):
     if ast[0] == "quote":
         return ast[1]
 
+    # functions
+    if is_closure(ast[0]):
+        closure = ast[0]
+        arguments = ast[1:]
+        params = closure.params
+        number_of_arguments = len(arguments)
+        number_of_params = len(params)
+      
+
+        if number_of_arguments != number_of_params:
+            raise LispError
+        variables = {}
+        for i in range(number_of_arguments):
+            arg = evaluate(arguments[i], env)
+            param = params[i]
+            variables.update({param : arg})
+        environment = closure.env.extend(variables)
+
+        return evaluate(closure.body, environment)
+
+    if ast[0] == "lambda":
+        if not is_list(ast[1]):
+            raise LispError
+        if len(ast) == 3:
+            return Closure(env, ast[1], ast[2])
+        else: raise LispError("number of arguments")
+
+
+
     # defining variables
     if ast[0] == "define":
         if is_symbol(ast[1]):
@@ -40,14 +69,6 @@ def evaluate(ast, env):
                 return env.set(ast[1], ast[2])
             else: raise LispError("Wrong number of arguments")
         else: raise LispError("non-symbol")
-
-    # functions
-    if ast[0] == "lambda":
-        if not is_list(ast[1]):
-            raise LispError
-        if len(ast) == 3:
-            return Closure(env, ast[1], ast[2])
-        else: raise LispError("number of arguments")
 
     #typechecks
     if ast[0] == "atom":
