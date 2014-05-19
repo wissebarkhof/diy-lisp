@@ -41,6 +41,10 @@ def evaluate(ast, env):
             else: raise LispError("Wrong number of arguments")
         else: raise LispError("non-symbol")
 
+    # functions
+    if ast[0] == "lambda":
+        return Closure(env, ast[1], evaluate(ast[2], env))
+
     #typechecks
     if ast[0] == "atom":
         return is_atom(evaluate(ast[1], env))
