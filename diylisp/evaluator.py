@@ -43,7 +43,11 @@ def evaluate(ast, env):
 
     # functions
     if ast[0] == "lambda":
-        return Closure(env, ast[1], evaluate(ast[2], env))
+        if not is_list(ast[1]):
+            raise LispError
+        if len(ast) == 3:
+            return Closure(env, ast[1], ast[2])
+        else: raise LispError("number of arguments")
 
     #typechecks
     if ast[0] == "atom":
