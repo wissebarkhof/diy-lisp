@@ -25,16 +25,17 @@ def evaluate(ast, env):
 
     # evaluating atoms
     if is_symbol(ast):
-        return evaluate(env.lookup(ast), env)
+        return env.lookup(ast)
     if is_boolean(ast):
         return ast
     if is_integer(ast):
         return ast
-    if ast[0] == "quote":
-        return ast[1]
 
     if is_list(ast):
-    # functions
+
+        if ast[0] == "quote":
+            return ast[1]
+        # functions
         if is_closure(ast[0]):
             closure = ast[0]
             arguments = ast[1:]
@@ -64,7 +65,7 @@ def evaluate(ast, env):
         if ast[0] == "define":
             if is_symbol(ast[1]):
                 if len(ast) == 3:
-                    return env.set(ast[1], ast[2])
+                    return env.set(ast[1],evaluate(ast[2], env))
                 else: raise LispError("Wrong number of arguments")
             else: raise LispError("non-symbol")
 
@@ -111,5 +112,12 @@ def evaluate(ast, env):
             if evaluate(pred, env):
                 return evaluate(then, env)
             else: return evaluate(elsee, env)
+
+        else:
+            if is_symbol(ast[0]) or is_list(ast[0]):
+                closure = evaluate(ast[0], env)
+                return evaluate([closure] + ast[1:], env)
+
+
 
 
