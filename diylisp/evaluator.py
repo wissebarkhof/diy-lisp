@@ -44,7 +44,8 @@ def evaluate(ast, env):
             number_of_params = len(params)
 
             if number_of_arguments != number_of_params:
-                raise LispError
+                raise LispError( "wrong number of arguments, expected %(param)d got %(arg)d" %
+                                  {"arg" : number_of_arguments, "param" : number_of_params } )
             variables = {}
             for i in range(number_of_arguments):
                 arg = evaluate(arguments[i], env)
@@ -113,11 +114,12 @@ def evaluate(ast, env):
                 return evaluate(then, env)
             else: return evaluate(elsee, env)
 
-        else:
-            if is_symbol(ast[0]) or is_list(ast[0]):
-                closure = evaluate(ast[0], env)
-                return evaluate([closure] + ast[1:], env)
 
+        if is_symbol(ast[0]) or is_list(ast[0]):
+            closure = evaluate(ast[0], env)
 
+            return evaluate([closure] + ast[1:], env)
+
+        else: raise LispError("not a function")
 
 
