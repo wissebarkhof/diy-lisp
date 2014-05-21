@@ -33,9 +33,41 @@ def evaluate(ast, env):
 
     if is_list(ast):
 
+        # lists
+        if ast[0] == "cons":
+            if len(ast) != 3:
+                raise LispError("expected 2 arguments")
+            else:
+                value = evaluate(ast[1], env)
+                list = evaluate(ast[2], env)
+                new_list = [value]
+                for i in list:
+                    new_list.append(i)
+                return new_list
+
+        if ast[0] == "head":
+            list = evaluate(ast[1], env)
+            if list == []:
+                raise LispError
+            else: return list[0]
+
+        if ast[0] == "tail":
+            list = evaluate(ast[1], env)
+            if list == []:
+
+                raise LispError
+            else: return list[1:]
+
+        if ast[0] == "empty":
+            list = evaluate(ast[1], env)
+            if list == []:
+                return True
+            else: return False
+
         if ast[0] == "quote":
             return ast[1]
         # functions
+
 
         if is_closure(ast[0]):
             closure = ast[0]
@@ -55,17 +87,6 @@ def evaluate(ast, env):
             environment = closure.env.extend(variables)
 
             return evaluate(closure.body, environment)
-
-        if ast[0] == "cons":
-            if len(ast) != 3:
-                raise LispError
-            else:
-                value = evaluate(ast[1], env)
-                list = evaluate(ast[2], env)
-                new_list = [value]
-                for i in list:
-                    new_list.append(i)
-                return new_list
 
         if ast[0] == "lambda":
             if not is_list(ast[1]):
