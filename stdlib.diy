@@ -4,5 +4,47 @@
     (lambda (b)
         (if b #f #t)))
 
+(define or
+    (lambda (a b)
+        (if a #t (if b #t #f))
+        ))
+
+(define and
+    (lambda (a b)
+        (if a (if b #t #f) #f)
+        ))
+
+(define xor
+    (lambda (a b)
+        (and (or a b)
+             (not (and a b)))))
+
+(define >=
+    (lambda (a b)
+        (or (eq a b)
+            (> a b))))
+
+(define <=
+    (lambda (a b)
+        (or (eq a b)
+            (< a b))))
+
+(define sum
+    (lambda (a)
+    (if (not (empty a))
+        (+ (head a) (sum (tail a)))
+        0 )))
+
+(define length
+    (lambda (a)
+        (if (empty a)
+            0
+            (+ 1 (length (tail a)))
+                )))
+
+(define append
+    (lambda (a b)
+        (cons (head a) (append (tail a) b))))
+
 ;; DIY -- Implement the rest of your standard library
 ;; here as part 7 of the workshop.
