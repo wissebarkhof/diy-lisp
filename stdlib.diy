@@ -2,7 +2,8 @@
 
 (define not
     (lambda (b)
-        (if b #f #t)))
+        (if b #f #t)
+        ))
 
 (define or
     (lambda (a b)
@@ -17,23 +18,27 @@
 (define xor
     (lambda (a b)
         (and (or a b)
-             (not (and a b)))))
+             (not (and a b))
+             )))
 
 (define >=
     (lambda (a b)
         (or (eq a b)
-            (> a b))))
+            (> a b)
+            )))
 
 (define <=
     (lambda (a b)
         (or (eq a b)
-            (< a b))))
+            (< a b)
+            )))
 
 (define sum
     (lambda (a)
     (if (not (empty a))
         (+ (head a) (sum (tail a)))
-        0 )))
+        0
+        )))
 
 (define length
     (lambda (a)
@@ -44,11 +49,31 @@
 
 (define append
     (lambda (a b)
-    (if (empty a)
-        b
-        (if (empty b)
-            a
-        (cons (head a) (append (tail a) b))))))
+        (if (empty a)
+            b
+            (if (empty b)
+                a
+                (cons (head a) (append (tail a) b))
+                ))))
+
+(define filter
+        (lambda (fn list)
+            (if (empty list)
+                list
+                (if (fn (head list))
+                    (cons (head list) (filter fn (tail list)))
+                    (filter fn (tail list))
+                    ))))
+
+(define map
+        (lambda (fn list)
+            (if (empty list)
+                list
+                 (cons (fn (head list)) (map fn (tail list)))
+                 )))
+                 
+
+
 
 
 ;; DIY -- Implement the rest of your standard library
