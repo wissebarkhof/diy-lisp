@@ -44,7 +44,12 @@
 
 (define append
     (lambda (a b)
-        (cons (head a) (append (tail a) b))))
+    (if (empty a)
+        b
+        (if (empty b)
+            a
+        (cons (head a) (append (tail a) b))))))
+
 
 ;; DIY -- Implement the rest of your standard library
 ;; here as part 7 of the workshop.
